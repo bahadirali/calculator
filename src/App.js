@@ -28,7 +28,7 @@ export default class App extends React.Component{
       try {
         if(currentScreenText.length > 0){
           this.setState({
-            screenText: eval(currentScreenText),
+            screenText: eval(currentScreenText).toString(),
           });
         } 
       } catch (e) {
