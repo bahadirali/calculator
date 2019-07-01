@@ -1,3 +1,5 @@
+/* eslint no-eval: 0 */
+
 import React from 'react';
 import './App.css';
 
@@ -16,9 +18,31 @@ export default class App extends React.Component{
 
   handleButtonInput(event, input){
     const currentScreenText = this.state.screenText;
-    this.setState({
-      screenText:  currentScreenText + input,
-    });
+    if(input === 'c'){
+      if(currentScreenText.length > 0){
+        this.setState({
+          screenText: currentScreenText.substring(0, currentScreenText.length-1),
+        });
+      }
+    }else if(input === '='){
+      try {
+        if(currentScreenText.length > 0){
+          this.setState({
+            screenText: eval(currentScreenText),
+          });
+        } 
+      } catch (e) {
+          if (e instanceof SyntaxError) {
+            console.log(e.message);  
+            //alert(e.message);
+          }
+      }
+    }
+    else{
+      this.setState({
+        screenText:  currentScreenText + input,
+      });
+    }
   }
 
   clearScreen(event){
@@ -40,9 +64,9 @@ export default class App extends React.Component{
                           ];
 
     rows.push(
-      <tr>
+      <tr key="first_row">
         <td colSpan="4">
-          <button onClick={this.clearScreen}>
+          <button className="clear-button" onClick={this.clearScreen}>
             clear
           </button>
         </td>
@@ -52,15 +76,17 @@ export default class App extends React.Component{
     for(let i=0; i<4; i++){
       let cells = [];
       for(let j=0; j<4; j++){
-        cells.push(<td>
-          <button onClick={(e) => {this.handleButtonInput(e, buttonSymbols[i][j])}}>
-            {buttonSymbols[i][j]}
+        cells.push(<td key={i * 4 + j} >
+          <button
+            className="calc-button"
+            onClick={(e) => {this.handleButtonInput(e, buttonSymbols[i][j])}}>
+              {buttonSymbols[i][j]}
           </button>
         </td>);
       }
       
       rows.push(
-        <tr>
+        <tr key={"row_"+ i}>
           {cells}
         </tr>
       );
@@ -75,13 +101,23 @@ export default class App extends React.Component{
 
     return (
       <div className="App">
-        <table>
-          <tr>
-            <td colSpan="4">
-              {this.state.screenText}
-            </td>
-          </tr>
-          {keyboard}
+        <table 
+          cellPadding="0"
+          cellSpacing="0"
+          border="0"
+          className="calc-table">
+          <tbody>
+            <tr>
+              <td colSpan="4">
+                <div className="screen-outer-div">
+                  <div className="screen-inner-div">
+                    {this.state.screenText === '' ? '0' : this.state.screenText}
+                  </div>
+                </div>
+              </td>
+            </tr>
+            {keyboard}
+          </tbody>
         </table>
       </div>
     );
