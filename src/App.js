@@ -39,6 +39,7 @@ export default class App extends React.Component{
       }
     }
     else{
+      if(input == 'x') input = '*';
       this.setState({
         screenText:  currentScreenText + input,
       });
